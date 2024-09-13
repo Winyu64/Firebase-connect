@@ -1,16 +1,130 @@
-# flutter_6_9
 
-A new Flutter project.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+# แอพ Firebase connect
 
-A few resources to get you started if this is your first Flutter project:
+![image](https://github.com/user-attachments/assets/51557af3-eadc-49f1-8b9c-bf4ba3c97721)
+![image](https://github.com/user-attachments/assets/e2712548-4e8a-403d-a0f0-e891d4451d71)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## ภาพรวม
+นี่คือแอป Todo อย่างง่ายที่พัฒนาด้วย Flutter โดยเชื่อมต่อกับ Firebase Firestore เพื่อจัดเก็บข้อมูลแบบเรียลไทม์ ผู้ใช้สามารถสร้าง แก้ไข และลบงานได้ อีกทั้งยังสามารถเปลี่ยนสถานะงานว่าสำเร็จแล้วหรือยัง
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## คุณสมบัติ
+- **เพิ่มงานใหม่**: สร้างงานใหม่โดยใส่ชื่อ รายละเอียด และสถานะว่าสำเร็จหรือไม่
+- **แก้ไขงาน**: แก้ไขงานที่มีอยู่แล้วและเปลี่ยนสถานะของงาน
+- **ลบงาน**: ลบงานออกจากรายการ
+- **การเชื่อมต่อ Firestore**: งานทั้งหมดจะถูกจัดเก็บใน Firebase Firestore และซิงค์ข้อมูลแบบเรียลไทม์
+
+## วิธีติดตั้ง
+
+### สิ่งที่ต้องเตรียมก่อน
+- ต้องติดตั้ง **Flutter** บนระบบของคุณ [คู่มือการติดตั้ง Flutter](https://flutter.dev/docs/get-started/install).
+- ต้องติดตั้ง **Firebase CLI** [คู่มือการติดตั้ง Firebase CLI](https://firebase.google.com/docs/cli).
+- สร้างโปรเจกต์ Firebase และเปิดใช้งาน Firestore
+
+### ขั้นตอนการติดตั้ง
+
+1. **โคลนโครงการจาก GitHub:**
+   ```bash
+   git clone https://github.com/yourusername/your-repository.git
+   cd your-repository
+   ```
+
+2. **ติดตั้ง dependencies:**
+   รันคำสั่งต่อไปนี้เพื่อติดตั้ง dependencies ที่จำเป็น:
+   ```bash
+   flutter pub get
+   ```
+
+3. **ตั้งค่า Firebase:**
+   - สร้างโปรเจกต์ Firebase และเปิดใช้งาน Firestore
+   - ดาวน์โหลดไฟล์ `google-services.json` (สำหรับ Android) และ `GoogleService-Info.plist` (สำหรับ iOS) จาก Firebase Console
+   - นำไฟล์ที่ดาวน์โหลดมาใส่ในโฟลเดอร์ดังนี้:
+     - `android/app/` สำหรับ `google-services.json`
+     - `ios/Runner/` สำหรับ `GoogleService-Info.plist`
+
+4. **ตั้งค่า Firebase ในแอป Flutter ของคุณ:**
+   รันคำสั่งต่อไปนี้เพื่อกำหนดค่า Firebase:
+   ```bash
+   flutterfire configure
+   ```
+
+5. **รันแอป:**
+   คุณสามารถรันแอปในเครื่องหรืออุปกรณ์ของคุณด้วยคำสั่งนี้:
+   ```bash
+   flutter run
+   ```
+
+## วิธีการใช้งาน
+
+- **เพิ่มงาน**: คลิกที่ปุ่ม **"+"** เพื่อเพิ่มงานใหม่ กรอกชื่อ รายละเอียด และกำหนดสถานะว่างานสำเร็จหรือยัง
+- **แก้ไขงาน**: คลิกที่ไอคอน **แก้ไข** ถัดจากงานที่คุณต้องการแก้ไข เพื่อเปลี่ยนแปลงรายละเอียดหรือสถานะ
+- **ลบงาน**: คลิกที่ไอคอน **ลบ** ถัดจากงานที่คุณต้องการลบ
+
+## Flowchart ของการทำงานของแอป
+
+ด้านล่างนี้เป็น Flowchart ที่แสดงการทำงานของแอป:
+
+```
+┌───────────────────────┐
+│   เปิดแอป Todo        │
+└──────────┬────────────┘
+           │
+           ▼
+┌───────────────────────┐
+│   ดึงข้อมูลรายการงาน │<─────────┐
+└──────────┬────────────┘          │
+           │                       │
+           ▼                       │
+┌───────────────────────┐           │
+│   แสดงรายการงาน       │           │
+└──────────┬────────────┘           │
+           │                        │
+           ▼                        │
+┌─────────────────────────────┐     │
+│ ผู้ใช้เพิ่ม/แก้ไข/ลบงาน     │     │
+└──────────┬──────────────────┘     │
+           │                        │
+           ▼                        │
+┌─────────────────────────────┐     │
+│ อัปเดตฐานข้อมูล Firestore   │     │
+└──────────┬──────────────────┘     │
+           │                        │
+           └────────────────────────┘
+```
+
+1. เมื่อผู้ใช้เปิดแอป จะดึงรายการงานจาก Firebase Firestore
+2. รายการงานจะแสดงผลใน ListView
+3. ผู้ใช้สามารถ:
+   - เพิ่มงานใหม่โดยการคลิกปุ่ม "+"
+   - แก้ไขงานที่มีอยู่แล้ว
+   - ลบงาน
+4. การเปลี่ยนแปลงทั้งหมดจะสะท้อนกลับไปยัง Firebase Firestore แบบเรียลไทม์
+
+## โครงสร้างของโปรเจกต์
+
+```
+/lib
+  ├── main.dart                # จุดเริ่มต้นของแอปพลิเคชัน
+  ├── firebase_options.dart     # ไฟล์ตั้งค่า Firebase
+  └── widgets/
+        ├── todo_item.dart      # Widget สำหรับแสดงงานแต่ละรายการ
+        └── todo_dialog.dart    # Dialog สำหรับเพิ่ม/แก้ไขงาน
+```
+
+## Dependencies
+
+```yaml
+dependencies:
+  flutter:
+    sdk: flutter
+  firebase_core: ^2.14.0
+  cloud_firestore: ^4.10.0
+```
+
+## การร่วมพัฒนา
+
+หากคุณต้องการร่วมพัฒนาหรือปรับปรุงโค้ด คุณสามารถเปิด Issue หรือตั้ง Pull Request ได้ตามที่เห็นสมควร
+
+---
